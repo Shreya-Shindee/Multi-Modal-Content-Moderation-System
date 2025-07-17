@@ -88,10 +88,13 @@ def display_prediction_results(results: Dict[str, Any]):
     # Color code based on prediction
     if prediction == "Safe":
         st.success(
-            f"✅ **Prediction: {prediction}** (Confidence: {confidence:.2%})")
-    elif prediction in ["Hate Speech", "Violence", "Sexual Content", "Harassment"]:
+            f"✅ **Prediction: {prediction}** "
+            f"(Confidence: {confidence:.2%})")
+    elif prediction in ["Hate Speech", "Violence", "Sexual Content",
+                        "Harassment"]:
         st.error(
-            f"⚠️ **Prediction: {prediction}** (Confidence: {confidence:.2%})")
+            f"⚠️ **Prediction: {prediction}** "
+            f"(Confidence: {confidence:.2%})")
     else:
         st.warning(
             f"❓ **Prediction: {prediction}** (Confidence: {confidence:.2%})")
@@ -175,7 +178,8 @@ def main():
         st.markdown(f"- Docs: {API_BASE_URL}/docs")
 
     if not api_status:
-        st.warning("⚠️ Please start the API server to use the moderation system.")
+        st.warning("⚠️ Please start the API server to use the moderation "
+                   "system.")
         st.stop()
 
     # Main content area
@@ -230,7 +234,8 @@ def main():
     with tab3:
         st.header("🔄 Multi-Modal Content Moderation")
         st.markdown(
-            "Analyze both text and image together for comprehensive moderation.")
+            "Analyze both text and image together for comprehensive "
+            "moderation.")
 
         # Text input
         multi_text = st.text_area(
@@ -271,7 +276,8 @@ def main():
     st.markdown("---")
     st.markdown("""
     <div style='text-align: center'>
-        <p>🛡️ Multi-Modal Content Moderation System | Built with Streamlit & FastAPI</p>
+        <p>🛡️ Multi-Modal Content Moderation System |
+        Built with Streamlit & FastAPI</p>
     </div>
     """, unsafe_allow_html=True)
 
