@@ -1,6 +1,32 @@
 # Multi-Modal Content Moderation System for Social Media Platforms
 
-A comprehensive AI system that analyzes both text and images to detect harmful content including hate speech, violence, and inappropriate imagery for social media platforms.
+[![Python](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.104+-green.svg)](https://fastapi.tiangolo.com/)
+[![Streamlit](https://img.shields.io/badge/Streamlit-1.28+-red.svg)](https://streamlit.io/)
+[![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-orange.svg)](https://pytorch.org/)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
+<div align="center">
+  
+🛡️ **AI-Powered Content Moderation System**
+
+*Detect harmful content in text and images using state-of-the-art deep learning models*
+
+[Demo](#-demo) • [Features](#-features) • [Installation](#-installation) • [API Docs](#-api-documentation) • [Contributing](#-contributing)
+
+</div>
+
+---
+
+## 📖 Overview
+
+A comprehensive AI system that analyzes both text and images to detect harmful content including hate speech, violence, and inappropriate imagery for social media platforms. Built with modern ML frameworks and production-ready architecture.
+
+### 🎯 **Key Capabilities:**
+- **Real-time Content Analysis** - Process text and images in milliseconds
+- **Multi-Modal Intelligence** - Combine text and visual analysis for better accuracy  
+- **Production-Ready** - Scalable API with comprehensive monitoring
+- **Interactive Interface** - User-friendly web interface for testing and demos
 
 ## 🚀 Features
 
