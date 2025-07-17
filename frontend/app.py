@@ -2,13 +2,16 @@
 Streamlit Frontend for Multi-Modal Content Moderation
 ====================================================
 
-Interactive web interface for content moderation system.
+Enhanced interactive web interface for content moderation system.
 """
 
 import streamlit as st
 import requests
 from PIL import Image
 from typing import Dict, Any
+import time
+import plotly.express as px
+import pandas as pd
 
 # Configure Streamlit page
 st.set_page_config(
@@ -17,6 +20,81 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 )
+
+# Custom CSS for better styling
+st.markdown("""
+<style>
+    .main-header {
+        font-size: 3rem;
+        font-weight: bold;
+        text-align: center;
+        color: #1f77b4;
+        margin-bottom: 2rem;
+    }
+    .metric-card {
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        padding: 1rem;
+        border-radius: 10px;
+        color: white;
+        margin: 0.5rem 0;
+    }
+    .safe-prediction {
+        background: linear-gradient(90deg, #56ab2f 0%, #a8e6cf 100%);
+        padding: 1rem;
+        border-radius: 10px;
+        color: white;
+        font-weight: bold;
+        text-align: center;
+    }
+    .unsafe-prediction {
+        background: linear-gradient(90deg, #ff416c 0%, #ff4b2b 100%);
+        padding: 1rem;
+        border-radius: 10px;
+        color: white;
+        font-weight: bold;
+        text-align: center;
+    }
+    .warning-prediction {
+        background: linear-gradient(90deg, #f7971e 0%, #ffd200 100%);
+        padding: 1rem;
+        border-radius: 10px;
+        color: white;
+        font-weight: bold;
+        text-align: center;
+    }
+    .stats-container {
+        background: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 15px;
+        margin: 1rem 0;
+        border-left: 5px solid #1f77b4;
+    }
+    .feature-box {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 1.5rem;
+        border-radius: 15px;
+        color: white;
+        margin: 1rem 0;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 2px;
+    }
+    .stTabs [data-baseweb="tab"] {
+        height: 50px;
+        padding-left: 20px;
+        padding-right: 20px;
+        background-color: #f0f2f6;
+        border-radius: 10px;
+        color: #262730;
+        font-weight: bold;
+    }
+    .stTabs [aria-selected="true"] {
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+</style>
+""", unsafe_allow_html=True)
 
 # API Configuration
 API_BASE_URL = "http://localhost:8000"
@@ -32,105 +110,215 @@ def check_api_health() -> bool:
 
 
 def predict_text(text: str, threshold: float = 0.5) -> Dict[str, Any]:
-    """Send text prediction request to API."""
-    try:
-        response = requests.post(
-            f"{API_BASE_URL}/predict/text",
-            json={"text": text, "threshold": threshold},
-            timeout=30
-        )
-        if response.status_code == 200:
-            return response.json()
-        else:
-            return {"error": f"API Error: {response.status_code}"}
-    except Exception as e:
-        return {"error": f"Connection Error: {str(e)}"}
+    """Send text prediction request to API with loading indicator."""
+    with st.spinner('🔍 Analyzing text content...'):
+        # Brief delay for UX
+        time.sleep(0.3)
+
+        try:
+            response = requests.post(
+                f"{API_BASE_URL}/predict/text",
+                json={"text": text, "threshold": threshold},
+                timeout=30
+            )
+            if response.status_code == 200:
+                return response.json()
+            else:
+                return {"error": f"API Error: {response.status_code}"}
+        except Exception as e:
+            return {"error": f"Connection Error: {str(e)}"}
 
 
 def predict_multimodal(text: str = None, image_file=None,
                        threshold: float = 0.5) -> Dict[str, Any]:
-    """Send multimodal prediction request to API."""
-    try:
-        files = {}
-        data = {"threshold": threshold}
+    """Send multimodal prediction request to API with loading indicator."""
+    with st.spinner('🔍 Analyzing multimodal content...'):
+        # Brief delay for UX
+        time.sleep(0.5)
 
-        if text:
-            data["text"] = text
+        try:
+            files = {}
+            data = {"threshold": threshold}
 
-        if image_file:
-            files["image"] = ("image.jpg", image_file, "image/jpeg")
+            if text:
+                data["text"] = text
 
-        response = requests.post(
-            f"{API_BASE_URL}/predict/multimodal",
-            data=data,
-            files=files,
-            timeout=30
-        )
+            if image_file:
+                files["image"] = ("image.jpg", image_file, "image/jpeg")
 
-        if response.status_code == 200:
-            return response.json()
-        else:
-            return {"error": f"API Error: {response.status_code}"}
-    except Exception as e:
-        return {"error": f"Connection Error: {str(e)}"}
+            response = requests.post(
+                f"{API_BASE_URL}/predict/multimodal",
+                data=data,
+                files=files,
+                timeout=30
+            )
+
+            if response.status_code == 200:
+                return response.json()
+            else:
+                return {"error": f"API Error: {response.status_code}"}
+        except Exception as e:
+            return {"error": f"Connection Error: {str(e)}"}
 
 
 def display_prediction_results(results: Dict[str, Any]):
-    """Display prediction results in a formatted way."""
+    """Display prediction results in an enhanced, visually appealing way."""
     if "error" in results:
         st.error(f"❌ {results['error']}")
         return
 
-    # Main prediction
+    # Main prediction with enhanced styling
     prediction = results.get("prediction", "Unknown")
     confidence = results.get("confidence", 0.0)
 
-    # Color code based on prediction
-    if prediction == "Safe":
-        st.success(
-            f"✅ **Prediction: {prediction}** "
-            f"(Confidence: {confidence:.2%})")
-    elif prediction in ["Hate Speech", "Violence", "Sexual Content",
-                        "Harassment"]:
-        st.error(
-            f"⚠️ **Prediction: {prediction}** "
-            f"(Confidence: {confidence:.2%})")
-    else:
-        st.warning(
-            f"❓ **Prediction: {prediction}** (Confidence: {confidence:.2%})")
+    # Enhanced prediction display with custom styling
+    col1, col2, col3 = st.columns([1, 2, 1])
 
-    # Detailed scores
+    with col2:
+        if prediction == "Safe":
+            st.markdown(f"""
+            <div class="safe-prediction">
+                <h2>✅ CONTENT IS SAFE</h2>
+                <h3>Confidence: {confidence:.1%}</h3>
+            </div>
+            """, unsafe_allow_html=True)
+        elif prediction in ["Hate Speech", "Violence", "Sexual Content",
+                            "Harassment"]:
+            st.markdown(f"""
+            <div class="unsafe-prediction">
+                <h2>⚠️ HARMFUL CONTENT DETECTED</h2>
+                <h3>Category: {prediction}</h3>
+                <h3>Confidence: {confidence:.1%}</h3>
+            </div>
+            """, unsafe_allow_html=True)
+        else:
+            st.markdown(f"""
+            <div class="warning-prediction">
+                <h2>❓ UNCERTAIN CLASSIFICATION</h2>
+                <h3>Category: {prediction}</h3>
+                <h3>Confidence: {confidence:.1%}</h3>
+            </div>
+            """, unsafe_allow_html=True)
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # Enhanced detailed scores visualization
     scores = results.get("scores", {})
     if scores:
-        st.subheader("📊 Detailed Scores")
+        st.markdown("### 📊 Detailed Analysis")
 
-        # Create columns for better layout
-        cols = st.columns(len(scores))
-        for i, (category, score) in enumerate(scores.items()):
-            with cols[i]:
-                # Color code the metric
+        # Create a more visually appealing scores display
+        col1, col2 = st.columns([2, 1])
+
+        with col1:
+            # Bar chart for scores
+            df_scores = pd.DataFrame(
+                list(scores.items()),
+                columns=['Category', 'Score']
+            )
+            df_scores['Score_Percent'] = df_scores['Score'] * 100
+
+            # Color map for categories
+            color_map = {
+                'Safe': '#28a745',
+                'Hate Speech': '#dc3545',
+                'Violence': '#fd7e14',
+                'Sexual Content': '#e83e8c',
+                'Harassment': '#6f42c1'
+            }
+
+            fig = px.bar(
+                df_scores,
+                x='Score_Percent',
+                y='Category',
+                orientation='h',
+                title='Confidence Scores by Category',
+                color='Category',
+                color_discrete_map=color_map,
+                text='Score_Percent'
+            )
+            fig.update_traces(
+                texttemplate='%{text:.1f}%',
+                textposition='inside'
+            )
+            fig.update_layout(
+                height=300,
+                showlegend=False,
+                xaxis_title="Confidence (%)",
+                yaxis_title="",
+                font=dict(size=12)
+            )
+            st.plotly_chart(fig, use_container_width=True)
+
+        with col2:
+            # Metrics cards
+            st.markdown("#### Key Metrics")
+            for category, score in scores.items():
+                # Color coding for metrics
                 if category == "Safe":
-                    st.metric(
-                        label=category,
-                        value=f"{score:.2%}",
-                        delta=None
-                    )
+                    delta_color = "normal" if score > 0.5 else "inverse"
                 else:
-                    st.metric(
-                        label=category,
-                        value=f"{score:.2%}",
-                        delta=None
-                    )
+                    delta_color = "inverse" if score > 0.5 else "normal"
 
-    # Processing info
+                st.metric(
+                    label=category,
+                    value=f"{score:.1%}",
+                    delta=f"{score-0.5:.1%}" if score != 0.5 else None,
+                    delta_color=delta_color
+                )
+
+    # Processing statistics in an attractive container
     processing_time = results.get("processing_time", 0)
     modalities = results.get("modalities_used", [])
 
-    col1, col2 = st.columns(2)
-    with col1:
-        st.info(f"⏱️ Processing Time: {processing_time:.3f}s")
-    with col2:
-        st.info(f"🔍 Modalities: {', '.join(modalities)}")
+    st.markdown(f"""
+    <div class="stats-container">
+        <h4>📈 Processing Statistics</h4>
+        <div style="display: flex; justify-content: space-around;
+                   margin-top: 1rem;">
+            <div style="text-align: center;">
+                <h3 style="color: #1f77b4; margin: 0;">
+                    {processing_time:.3f}s
+                </h3>
+                <p style="margin: 0; color: #666;">Processing Time</p>
+            </div>
+            <div style="text-align: center;">
+                <h3 style="color: #1f77b4; margin: 0;">{len(modalities)}</h3>
+                <p style="margin: 0; color: #666;">Modalities Used</p>
+            </div>
+            <div style="text-align: center;">
+                <h3 style="color: #1f77b4; margin: 0;">
+                    {', '.join(modalities)}
+                </h3>
+                <p style="margin: 0; color: #666;">Analysis Types</p>
+            </div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # Risk assessment gauge
+    if prediction != "Safe":
+        risk_level = confidence * 100
+        if risk_level > 80:
+            risk_color = "#dc3545"
+            risk_text = "HIGH RISK"
+        elif risk_level > 60:
+            risk_color = "#fd7e14"
+            risk_text = "MEDIUM RISK"
+        else:
+            risk_color = "#ffc107"
+            risk_text = "LOW RISK"
+
+        st.markdown(f"""
+        <div style="text-align: center; margin: 2rem 0;">
+            <h4>🎯 Risk Assessment</h4>
+            <div style="background: {risk_color}; color: white; padding: 1rem;
+                        border-radius: 10px; font-weight: bold;
+                        font-size: 1.2rem;">
+                {risk_text} ({risk_level:.0f}%)
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
 
 def main():
@@ -173,9 +361,8 @@ def main():
         )
 
         st.markdown("---")
-        st.markdown("**API Endpoints:**")
-        st.markdown(f"- Health: {API_BASE_URL}/health")
-        st.markdown(f"- Docs: {API_BASE_URL}/docs")
+        st.markdown("**System Status:**")
+        st.markdown(f"- API Health: {API_BASE_URL}/health")
 
     if not api_status:
         st.warning("⚠️ Please start the API server to use the moderation "
