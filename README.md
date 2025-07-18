@@ -5,6 +5,7 @@
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.28+-red.svg)](https://streamlit.io/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-orange.svg)](https://pytorch.org/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Streamlit%20Cloud-ff6b6b.svg)](https://ai-content-guardian-v2.streamlit.app/)
 
 <div align="center">
   
@@ -12,9 +13,21 @@
 
 *Detect harmful content in text and images using state-of-the-art deep learning models*
 
-[Demo](#-demo) • [Features](#-features) • [Installation](#-installation) • [API Docs](#-api-documentation) • [Contributing](#-contributing)
+**[🚀 Try Live Demo](https://ai-content-guardian-v2.streamlit.app/)** • [Features](#-features) • [Installation](#-installation) • [API Docs](#-api-documentation) • [Contributing](#-contributing)
 
 </div>
+
+---
+
+## 🎮 Live Demo
+
+**[📱 Interactive Demo: https://ai-content-guardian-v2.streamlit.app/](https://ai-content-guardian-v2.streamlit.app/)**
+
+Try the AI Content Guardian with:
+- ✅ **Text Analysis** - Test harmful content detection
+- ✅ **Image Analysis** - Upload and analyze images  
+- ✅ **Multi-Modal** - Combine text + image analysis
+- ✅ **Real-time Results** - Instant feedback and confidence scores
 
 ---
 
@@ -113,6 +126,42 @@ uvicorn api.main:app --reload --host 0.0.0.0 --port 8000
 ### 4. Launch Web Interface
 ```bash
 streamlit run frontend/app.py
+```
+
+---
+
+## 🚀 Deployment
+
+### Live Demo
+The system is deployed and accessible at:
+**[https://ai-content-guardian-v2.streamlit.app/](https://ai-content-guardian-v2.streamlit.app/)**
+
+### Deployment Options
+
+#### Streamlit Cloud (Frontend Only)
+1. Fork this repository
+2. Connect to [Streamlit Cloud](https://share.streamlit.io/)
+3. Set main file path to: `streamlit_app.py`
+4. Deploy with minimal dependencies
+
+#### Render/Railway (Full Stack)
+1. Deploy API backend using `render.yaml` configuration
+2. Update frontend API endpoint
+3. Deploy frontend separately
+
+#### Docker Deployment
+```bash
+# Build and run with Docker Compose
+docker-compose up -d
+```
+
+#### Local Development
+```bash
+# Start API server
+python api/main.py
+
+# Start frontend (separate terminal)
+streamlit run streamlit_app.py
 ```
 
 ## 📊 Model Performance
