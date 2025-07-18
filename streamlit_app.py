@@ -1,13 +1,9 @@
 """
 Standalone Streamlit App - AI Content Guardian
-Embeds all functionality without requiring separate backend
 """
 
 import streamlit as st
 from PIL import Image
-import time
-import random
-
 
 # Page configuration
 st.set_page_config(
@@ -24,7 +20,6 @@ st.markdown("""
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         background-attachment: fixed;
     }
-
     .main-header {
         text-align: center;
         color: white;
@@ -33,28 +28,16 @@ st.markdown("""
         text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         margin-bottom: 2rem;
     }
-
-    .feature-box {
-        background: rgba(255,255,255,0.1);
-        padding: 1.5rem;
-        border-radius: 15px;
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255,255,255,0.2);
-        margin: 1rem 0;
-    }
-
     .result-box {
         padding: 1rem;
         border-radius: 10px;
         margin: 1rem 0;
         border-left: 4px solid;
     }
-
     .safe-content {
         background-color: rgba(40, 167, 69, 0.1);
         border-left-color: #28a745;
     }
-
     .unsafe-content {
         background-color: rgba(220, 53, 69, 0.1);
         border-left-color: #dc3545;
@@ -63,19 +46,8 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
-@st.cache_data
-def get_demo_analysis():
-    """Get demo analysis results"""
-    return {
-        'text_safe': True,
-        'image_safe': True,
-        'confidence': 0.95
-    }
-
-
 def analyze_text_content(text, threshold=0.5):
     """Analyze text content for moderation"""
-    # Simple rule-based analysis for demo
     inappropriate_words = [
         'hate', 'violence', 'abuse', 'threat', 'spam',
         'scam', 'fake', 'misleading', 'harmful'
@@ -103,8 +75,6 @@ def analyze_text_content(text, threshold=0.5):
 
 def analyze_image_content(image, threshold=0.5):
     """Analyze image content for moderation"""
-    # Placeholder analysis for demo
-    # In real implementation, this would use computer vision models
     return {
         'is_safe': True,
         'confidence': 0.1,
@@ -124,25 +94,23 @@ def main():
     st.markdown("""
     <div style="text-align: center; color: white; margin-bottom: 3rem;">
         <h3>Advanced Multi-Modal Content Moderation System</h3>
-        <p>Powered by AI - Analyzing Text and Images for Safe Content</p>
+        <p>Powered by AI - Safe Content Analysis</p>
     </div>
     """, unsafe_allow_html=True)
 
     # Sidebar
     with st.sidebar:
         st.markdown("""
-        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                    padding: 1.5rem; border-radius: 15px; color: white;
-                    text-align: center; margin-bottom: 1rem;">
+        <div style="background: #667eea; padding: 1rem; border-radius: 10px; 
+                    color: white; text-align: center; margin-bottom: 1rem;">
             <h3>⚙️ Control Panel</h3>
         </div>
         """, unsafe_allow_html=True)
 
         # System status
         st.markdown("""
-        <div style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-                    padding: 1rem; border-radius: 12px; color: white;
-                    text-align: center; margin: 1rem 0;">
+        <div style="background: #28a745; padding: 1rem; border-radius: 10px; 
+                    color: white; text-align: center; margin: 1rem 0;">
             <h4>✅ System Online</h4>
             <p>Standalone Mode - Ready</p>
         </div>
@@ -181,13 +149,16 @@ def main():
 
         # Advanced settings
         with st.expander("🔧 Advanced Settings"):
-            enable_profanity = st.checkbox("Enhanced Detection", value=True)
-            enable_context = st.checkbox("Contextual Analysis", value=True)
+            st.checkbox("Enhanced Detection", value=True)
+            st.checkbox("Contextual Analysis", value=True)
             show_details = st.checkbox("Show Details", value=False)
 
     # Main content
-    tab1, tab2, tab3 = st.tabs(
-        ["📝 Text Analysis", "🖼️ Image Analysis", "🔄 Multi-Modal Analysis"])
+    tab1, tab2, tab3 = st.tabs([
+        "📝 Text Analysis",
+        "🖼️ Image Analysis",
+        "🔄 Multi-Modal Analysis"
+    ])
 
     # Text Analysis Tab
     with tab1:
@@ -206,20 +177,23 @@ def main():
 
                 # Display results
                 if result['is_safe']:
+                    confidence = (1-result['confidence'])*100
                     st.markdown(f"""
                     <div class="result-box safe-content">
                         <h4>✅ Content Approved</h4>
                         <p><strong>Status:</strong> Safe for publication</p>
-                        <p><strong>Confidence:</strong> {(1-result['confidence'])*100:.1f}%</p>
+                        <p><strong>Confidence:</strong> {confidence:.1f}%</p>
                     </div>
                     """, unsafe_allow_html=True)
                 else:
+                    confidence = result['confidence']*100
+                    violations = ', '.join(result['violations'])
                     st.markdown(f"""
                     <div class="result-box unsafe-content">
                         <h4>⚠️ Content Flagged</h4>
                         <p><strong>Status:</strong> Requires review</p>
-                        <p><strong>Confidence:</strong> {result['confidence']*100:.1f}%</p>
-                        <p><strong>Issues:</strong> {', '.join(result['violations'])}</p>
+                        <p><strong>Confidence:</strong> {confidence:.1f}%</p>
+                        <p><strong>Issues:</strong> {violations}</p>
                     </div>
                     """, unsafe_allow_html=True)
 
@@ -258,7 +232,7 @@ def main():
                         st.markdown("""
                         <div class="result-box safe-content">
                             <h4>✅ Image Approved</h4>
-                            <p><strong>Status:</strong> Safe for publication</p>
+                            <p><strong>Status:</strong> Safe</p>
                             <p><strong>Confidence:</strong> 90.0%</p>
                         </div>
                         """, unsafe_allow_html=True)
@@ -276,7 +250,8 @@ def main():
     # Multi-Modal Analysis Tab
     with tab3:
         st.header("🔄 Multi-Modal Content Analysis")
-        st.info("Combine text and image analysis for comprehensive content moderation.")
+        st.info("Combine text and image analysis for comprehensive " +
+                "content moderation.")
 
         col1, col2 = st.columns([1, 1])
 
@@ -300,10 +275,15 @@ def main():
             if multimodal_text or multimodal_image:
                 with st.spinner("Performing multi-modal analysis..."):
                     # Analyze both components
-                    text_result = analyze_text_content(
-                        multimodal_text, threshold) if multimodal_text else None
-                    image_result = analyze_image_content(
-                        multimodal_image, threshold) if multimodal_image else None
+                    text_result = None
+                    if multimodal_text:
+                        text_result = analyze_text_content(
+                            multimodal_text, threshold)
+
+                    image_result = None
+                    if multimodal_image:
+                        image_result = analyze_image_content(
+                            multimodal_image, threshold)
 
                     # Combined analysis
                     overall_safe = True
@@ -318,7 +298,7 @@ def main():
                     <div class="result-box safe-content">
                         <h4>✅ Combined Content Approved</h4>
                         <p><strong>Status:</strong> Safe for publication</p>
-                        <p><strong>Analysis:</strong> Both text and image components passed moderation</p>
+                        <p><strong>Analysis:</strong> Components passed</p>
                     </div>
                     """, unsafe_allow_html=True)
                 else:
@@ -326,7 +306,7 @@ def main():
                     <div class="result-box unsafe-content">
                         <h4>⚠️ Combined Content Flagged</h4>
                         <p><strong>Status:</strong> Requires review</p>
-                        <p><strong>Analysis:</strong> One or more components failed moderation</p>
+                        <p><strong>Analysis:</strong> Components failed</p>
                     </div>
                     """, unsafe_allow_html=True)
 
@@ -339,14 +319,14 @@ def main():
                     with st.expander("🖼️ Image Analysis Details"):
                         st.json(image_result)
             else:
-                st.warning("Please provide text, image, or both for analysis.")
+                st.warning("Please provide text, image, or both.")
 
     # Footer
     st.markdown("---")
     st.markdown("""
     <div style="text-align: center; color: white; margin-top: 2rem;">
         <p>🛡️ AI Content Guardian - Keeping your platform safe</p>
-        <p><small>Standalone Demo Version | Deployed on Streamlit Cloud</small></p>
+        <p><small>Demo Version | Deployed on Streamlit Cloud</small></p>
     </div>
     """, unsafe_allow_html=True)
 
