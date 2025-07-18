@@ -1,0 +1,55 @@
+# Core ML and Deep Learning
+torch>=2.0.0
+torchvision>=0.15.0
+transformers>=4.30.0
+tensorflow>=2.13.0
+tensorflow-hub>=0.14.0
+
+# Data Science and Analysis
+pandas>=2.0.0
+numpy>=1.24.0
+matplotlib>=3.7.0
+seaborn>=0.12.0
+scikit-learn>=1.3.0
+
+# Dataset and Model Hub
+datasets>=2.14.0
+huggingface-hub>=0.16.0
+
+# Web Framework and API
+streamlit>=1.25.0
+fastapi>=0.100.0
+uvicorn>=0.23.0
+
+# Image Processing
+Pillow>=10.0.0
+opencv-python>=4.8.0
+
+# Web Scraping and APIs
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+praw>=7.7.0
+
+# Experiment Tracking and Logging
+wandb>=0.15.0
+tensorboard>=2.13.0
+
+# Utilities
+python-dotenv>=1.0.0
+tqdm>=4.65.0
+jupyter>=1.0.0
+notebook>=6.5.0
+
+# Testing
+pytest>=7.4.0
+pytest-cov>=4.1.0
+
+# Deployment
+docker>=6.1.0
+gunicorn>=21.0.0
+
+# Additional ML utilities
+albumentations>=1.3.0
+imgaug>=0.4.0
+nltk>=3.8.0
+spacy>=3.6.0
