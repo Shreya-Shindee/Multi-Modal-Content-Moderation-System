@@ -5,6 +5,8 @@ Embeds all functionality without requiring separate backend
 
 import streamlit as st
 from PIL import Image
+import time
+import random
 
 
 # Page configuration
