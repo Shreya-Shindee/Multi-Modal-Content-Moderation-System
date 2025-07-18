@@ -254,7 +254,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # API Configuration
-API_BASE_URL = "http://localhost:8000"
+API_BASE_URL = "https://ai-content-guardian-api.onrender.com"
 
 
 @st.cache_data(ttl=300)  # Cache for 5 minutes
@@ -543,16 +543,20 @@ def main():
         # API Status with enhanced display
         if api_status:
             st.markdown("""
-            <div style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            <div style="
+                        background:
+                        linear-gradient(135deg, #28a745 0%, #20c997 100%);
                         padding: 1rem; border-radius: 12px; color: white;
-                        text-align: center; margin: 1rem 0;">
+                        text-align:
+                        center; margin: 1rem 0;">
                 <h4 style="margin: 0;">✅ System Online</h4>
                 <p style="margin: 0.5rem 0;">API Connected & Ready</p>
             </div>
             """, unsafe_allow_html=True)
         else:
             st.markdown("""
-            <div style="background: linear-gradient(135deg, #dc3545 0%, #e74c3c 100%);
+            <div style="background:
+                        linear-gradient(135deg, #dc3545 0%, #e74c3c 100%);
                         padding: 1rem; border-radius: 12px; color: white;
                         text-align: center; margin: 1rem 0;">
                 <h4 style="margin: 0;">❌ System Offline</h4>
@@ -568,7 +572,10 @@ def main():
             max_value=1.0,
             value=0.5,
             step=0.05,
-            help="Higher values = more strict filtering. Lower values = more permissive."
+            help=(
+                "Higher values = more strict filtering. "
+                "Lower values = more permissive."
+            )
         )
 
         # Display threshold interpretation
