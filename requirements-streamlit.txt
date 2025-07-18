@@ -1,0 +1,9 @@
+# Streamlit Cloud Requirements - Minimal for Demo
+streamlit>=1.28.0
+Pillow>=10.0.0
+pandas>=2.0.0
+requests>=2.31.0
+
+# Optional ML libraries (commented out for faster deployment)
+# torch>=2.0.0 --index-url https://download.pytorch.org/whl/cpu
+# transformers>=4.30.0
