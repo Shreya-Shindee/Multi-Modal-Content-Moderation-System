@@ -481,17 +481,19 @@ def display_prediction_results(results: Dict[str, Any]):
 
 def main():
     """Main Streamlit app with enhanced UI and performance."""
-    # Enhanced title with animation
+    # Enhanced title with better visibility
     st.markdown("""
-    <div class="main-header">
-        🛡️ AI Content Guardian
-    </div>
     <div style="text-align: center; margin-bottom: 2rem;">
-        <h3 style="color: white; font-weight: 300; margin: 0;">
+        <h1 style="color: white; font-size: 4rem; font-weight: 700;
+                   text-shadow: 2px 2px 4px rgba(0,0,0,0.3); margin: 0;">
+            🛡️ AI Content Guardian
+        </h1>
+        <h3 style="color: rgba(255,255,255,0.9); font-weight: 300;
+                   margin: 1rem 0; text-shadow: 1px 1px 2px rgba(0,0,0,0.2);">
             Advanced Multi-Modal Content Moderation System
         </h3>
-        <p style="color: rgba(255,255,255,0.8); font-size: 1.1rem;
-                  margin: 0.5rem 0;">
+        <p style="color: rgba(255,255,255,0.8); font-size: 1.2rem;
+                  margin: 0.5rem 0; text-shadow: 1px 1px 2px rgba(0,0,0,0.2);">
             Powered by BERT, Vision Transformer, and Advanced AI
         </p>
     </div>
@@ -557,8 +559,6 @@ def main():
                 <p style="margin: 0.5rem 0;">API Disconnected</p>
             </div>
             """, unsafe_allow_html=True)
-            st.markdown("**Start the API server:**")
-            st.code("python api/main.py", language="bash")
 
         # Enhanced threshold setting
         st.markdown("### 🎯 Detection Sensitivity")
@@ -595,13 +595,43 @@ def main():
             st.metric("System Health", "0%", "Down")
 
         st.markdown("---")
-        st.markdown("### 🔗 Quick Links")
-        st.markdown(
-            "- [GitHub Repository](https://github.com/Shreya-Shindee/Multi-Modal-Content-Moderation-System)")
-        st.markdown(
-            "- [Documentation](https://github.com/Shreya-Shindee/Multi-Modal-Content-Moderation-System/blob/main/README.md)")
-        st.markdown(
-            "- [Report Issues](https://github.com/Shreya-Shindee/Multi-Modal-Content-Moderation-System/issues)")
+
+        # Functional control panel options
+        st.markdown("### � System Controls")
+
+        # Model selection
+        st.session_state.model_choice = st.selectbox(
+            "AI Model",
+            ["BERT + ViT (Default)", "BERT Only", "ViT Only"],
+            help="Select which AI models to use for analysis"
+        )
+
+        # Processing mode
+        st.session_state.processing_mode = st.radio(
+            "Processing Mode",
+            ["Real-time", "Batch", "Detailed"],
+            help="Choose processing speed vs accuracy trade-off"
+        )
+
+        # Language selection
+        st.session_state.language = st.selectbox(
+            "Language",
+            ["English", "Multi-language", "Auto-detect"],
+            help="Select language for text analysis"
+        )
+
+        # Advanced options
+        with st.expander("Advanced Settings"):
+            st.session_state.enable_profanity = st.checkbox(
+                "Enhanced Profanity Detection", value=True)
+            st.session_state.enable_context = st.checkbox(
+                "Contextual Analysis", value=True)
+            st.session_state.enable_metadata = st.checkbox(
+                "Metadata Extraction", value=False)
+
+        # Clear results button
+        if st.button("🗑️ Clear Results", help="Clear all analysis results"):
+            st.rerun()
 
     if not api_status:
         st.warning("⚠️ Please start the API server to use the moderation "
